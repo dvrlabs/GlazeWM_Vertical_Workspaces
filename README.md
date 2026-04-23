@@ -2,6 +2,10 @@
 
 A small Python daemon — plus a tiny Rust helper — that extends [GlazeWM](https://github.com/glzr-io/glazewm) with **vertical workspace navigation**. Up/down keybindings become a smooth flow between tiled windows *and* the active workspaces stacked above and below them on the same monitor.
 
+## Why
+
+I wanted the same vertical workspaces as used by the [Cosmic Desktop Environment](https://github.com/pop-os/cosmic-epoch).
+
 ## The Concept
 
 GlazeWM's workspaces are a flat, named list. This project layers a *vertical* mental model on top: when a directional action would hit the edge of the current workspace, it spills over into the prev/next active workspace on the same monitor.
@@ -118,3 +122,47 @@ Keybinding fires but nothing happens? Run the daemon in a visible terminal and a
 1. **No UDP arrives** — GlazeWM isn't invoking `focus.exe`. Confirm it's on `PATH` (open a new terminal and run `focus.exe up` manually — the daemon should react), or hard-code the full path in the keybinding.
 2. **UDP arrives but nothing reaches the IPC** — the argument passed to `focus.exe` doesn't match one of the known triggers (`up`, `down`, `move_up`, `move_down`).
 3. **IPC runs but the fallback never fires** — the position/parent snapshot shape may have changed in your GlazeWM version; inspect what `query focused` actually returns and adjust `get_pos`.
+
+## My config, as an example
+
+```yaml
+general:
+  # Commands to run when the WM has started. This is useful for running a
+  # script or launching another application.
+  # Example: The below command launches Zebar.
+  startup_commands:
+    [
+      "shell-exec zebar",
+      "shell-exec pythonw C:\\Users\\JoeUser\\.glzr\\glazewm\\glazewm_focus_daemon.py",
+    ]
+```
+
+```yaml
+  # - commands: ["move --direction up"]
+  #   bindings: ["alt+shift+k", "alt+shift+up"]
+  #
+  # - commands: ["move --direction down"]
+  #   bindings: ["alt+shift+j", "alt+shift+down"]
+
+  - commands:
+      ["shell-exec C:\\Users\\JoeUser\\.glzr\\glazewm\\focus.exe move_up"]
+    bindings: ["alt+shift+k", "alt+shift+up"]
+
+  - commands:
+      ["shell-exec C:\\Users\\JoeUser\\.glzr\\glazewm\\focus.exe move_down"]
+    bindings: ["alt+shift+j", "alt+shift+down"]
+```
+
+```yaml
+  # - commands: ["focus --direction up"]
+  #   bindings: ["alt+k", "alt+up"]
+  #
+  # - commands: ["focus --direction down"]
+  #   bindings: ["alt+j", "alt+down"]
+  #
+  - commands: ["shell-exec C:\\Users\\JoeUser\\.glzr\\glazewm\\focus.exe up"]
+    bindings: ["alt+k", "alt+up"]
+
+  - commands: ["shell-exec C:\\Users\\JoeUser\\.glzr\\glazewm\\focus.exe down"]
+    bindings: ["alt+j", "alt+down"]
+```
