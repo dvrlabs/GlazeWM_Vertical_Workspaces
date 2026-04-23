@@ -1,4 +1,4 @@
-# GlazeWM_Vertical_Workspace_Concept
+# GlazeWM Vertical Workspaces
 
 A small Python daemon that extends [GlazeWM](https://github.com/glzr-io/glazewm) with **vertical workspace navigation** — treating up/down keybindings as a smooth flow between tiled windows *and* the active workspaces stacked above and below them on the same monitor.
 
